@@ -23,50 +23,57 @@ namespace DownloadsOrganizer
         {
             string extension = Path.GetExtension(e.Name).Replace(".", "").ToLower();
             System.Threading.Thread.Sleep(1000);
-            if (e.ChangeType == WatcherChangeTypes.Created && docExt.Contains(extension))
+
+            if ((e.ChangeType == WatcherChangeTypes.Created ||
+                e.ChangeType == WatcherChangeTypes.Renamed ||
+                e.ChangeType == WatcherChangeTypes.Changed) &&
+                File.Exists(e.FullPath))
             {
-                using (Stream streamSource = File.Open(e.FullPath, FileMode.Open))
+                if (e.ChangeType == WatcherChangeTypes.Created && docExt.Contains(extension))
                 {
-                    using (Stream destination = File.Create(String.Format(docPath, e.Name)))
+                    using (Stream streamSource = File.Open(e.FullPath, FileMode.Open))
                     {
-                        await streamSource.CopyToAsync(destination);
+                        using (Stream destination = File.Create(String.Format(docPath, e.Name)))
+                        {
+                            await streamSource.CopyToAsync(destination);
+                        }
                     }
+                    File.Delete(e.FullPath);
                 }
-                File.Delete(e.FullPath);
+                else if (e.ChangeType == WatcherChangeTypes.Created && photoExt.Contains(extension))
+                {
+                    using (Stream streamSource = File.Open(e.FullPath, FileMode.Open))
+                    {
+                        using (Stream destination = File.Create(String.Format(photoPath, e.Name)))
+                        {
+                            await streamSource.CopyToAsync(destination);
+                        }
+                    }
+                    File.Delete(e.FullPath);
+                }
+                else if (e.ChangeType == WatcherChangeTypes.Created && musicExt.Contains(extension))
+                {
+                    using (Stream streamSource = File.Open(e.FullPath, FileMode.Open))
+                    {
+                        using (Stream destination = File.Create(String.Format(musicPath, e.Name)))
+                        {
+                            await streamSource.CopyToAsync(destination);
+                        }
+                    }
+                    File.Delete(e.FullPath);
+                }
+                else if (e.ChangeType == WatcherChangeTypes.Created && othersExt.Contains(extension))
+                {
+                    using (Stream streamSource = File.Open(e.FullPath, FileMode.Open))
+                    {
+                        using (Stream destination = File.Create(String.Format(othersPath, e.Name)))
+                        {
+                            await streamSource.CopyToAsync(destination);
+                        }
+                    }
+                    File.Delete(e.FullPath);
+                }
             }
-            else if (e.ChangeType == WatcherChangeTypes.Created && photoExt.Contains(extension))
-            {
-                using (Stream streamSource = File.Open(e.FullPath, FileMode.Open))
-                {
-                    using (Stream destination = File.Create(String.Format(photoPath, e.Name)))
-                    {
-                        await streamSource.CopyToAsync(destination);
-                    }
-                }
-                File.Delete(e.FullPath);
-            }
-            else if (e.ChangeType == WatcherChangeTypes.Created && musicExt.Contains(extension))
-            {
-                using (Stream streamSource = File.Open(e.FullPath, FileMode.Open))
-                {
-                    using (Stream destination = File.Create(String.Format(musicPath, e.Name)))
-                    {
-                        await streamSource.CopyToAsync(destination);
-                    }
-                }
-                File.Delete(e.FullPath);
-            }
-            else if (e.ChangeType == WatcherChangeTypes.Created && othersExt.Contains(extension))
-            {
-                using (Stream streamSource = File.Open(e.FullPath, FileMode.Open))
-                {
-                    using (Stream destination = File.Create(String.Format(othersPath, e.Name)))
-                    {
-                        await streamSource.CopyToAsync(destination);
-                    }
-                }
-                File.Delete(e.FullPath);
-            }                      
         }                                     
     }
 }
