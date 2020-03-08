@@ -32,6 +32,8 @@ namespace DownloadsOrganizer
 
                 // Add event handlers.
                 watcher.Created += FileInformation.OnCreated;
+                watcher.Renamed += FileInformation.OnCreated;
+                watcher.Changed += FileInformation.OnCreated;
                 watcher.EnableRaisingEvents = true;
                 // Constant watching
                 while (true);
